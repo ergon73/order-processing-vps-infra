@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VPS Infrastructure - Order Processing System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 60px 40px;
+            max-width: 600px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        .status {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+        p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        .services {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 40px;
+        }
+        .service {
+            background: #f3f4f6;
+            padding: 20px;
+            border-radius: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .service:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .service-name {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        .service-status {
+            font-size: 0.85rem;
+            color: #10b981;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 40px 25px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .services {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 VPS Infrastructure</h1>
+        <span class="status">✓ Система запущена</span>
+        
+        <p>Инфраструктура для обработки заказов успешно развернута и готова к работе.</p>
+        
+        <div class="services">
+            <div class="service">
+                <div class="service-name">Nginx</div>
+                <div class="service-status">● Активен</div>
+            </div>
+            <div class="service">
+                <div class="service-name">PostgreSQL</div>
+                <div class="service-status">● Активен</div>
+            </div>
+            <div class="service">
+                <div class="service-name">pgAdmin</div>
+                <div class="service-status">● Активен</div>
+            </div>
+            <div class="service">
+                <div class="service-name">Registry</div>
+                <div class="service-status">● Активен</div>
+            </div>
+            <div class="service">
+                <div class="service-name">Watchtower</div>
+                <div class="service-status">● Активен</div>
+            </div>
+            <div class="service">
+                <div class="service-name">Backend</div>
+                <div class="service-status">○ Ожидание</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            VPS Infrastructure v1.0 | Docker Compose Stack<br>
+            Курс "Вайб-кодинг" - Модуль 8, Кейс 3
+        </div>
+    </div>
+</body>
+</html>

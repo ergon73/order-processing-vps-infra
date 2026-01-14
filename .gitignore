@@ -1,0 +1,13 @@
+.env
+.env.local
+registry/auth/htpasswd
+nginx/ssl/*
+*.pem
+*.key
+*.log
+.DS_Store
+.vscode/
+
+# Локальные файлы (не публикуем в GitHub)
+human-readme.md
+.cursorrules
