@@ -5,6 +5,12 @@
 [![Ubuntu](https://img.shields.io/badge/Ubuntu-22.04%20LTS-orange.svg)](https://ubuntu.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
+**🇬🇧 [English](#-english) | [🇷🇺 Русский](#-русский)**
+
+---
+
+## 🇬🇧 English
+
 Production-ready VPS infrastructure for order processing web application. Deployed via Docker Compose on Ubuntu 22.04 VPS with Nginx, PostgreSQL, pgAdmin, private Docker Registry, and automated updates.
 
 > 🎓 **Educational Project**: Part of "Vibe-Coding" course - Module 8, Case 3  
@@ -12,7 +18,7 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 
 ---
 
-## 📋 Table of Contents
+### 📋 Table of Contents
 
 - [Features](#-features)
 - [Architecture](#-architecture)
@@ -30,7 +36,7 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 
 ---
 
-## ✨ Features
+### ✨ Features
 
 - **🐳 Fully Dockerized**: All services run in Docker containers
 - **🔐 Secure by Default**: PostgreSQL isolated in internal network, SSH key-only access
@@ -42,7 +48,7 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 
 ---
 
-## 🏛️ Architecture
+### 🏛️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -79,7 +85,7 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 
 ---
 
-## 🛠️ Tech Stack
+### 🛠️ Tech Stack
 
 | Component | Technology | Version | Purpose |
 |-----------|-----------|---------|---------|
@@ -93,14 +99,14 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 
 ---
 
-## 📋 Prerequisites
+### 📋 Prerequisites
 
-### Local Machine (Windows 11)
+#### Local Machine (Windows 11)
 - **Cursor IDE** with Remote-SSH extension
 - **SSH client** (built-in in Windows 10/11)
 - **Git** (for cloning repository)
 
-### VPS Server
+#### VPS Server
 - **Ubuntu 22.04 LTS** (minimal 1 CPU, 768 MB RAM, 7 GB SSD)
 - **Public IPv4 address**
 - **Root access** (or sudo user)
@@ -108,16 +114,16 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 
 ---
 
-## 🚀 Quick Start
+### 🚀 Quick Start
 
-### 1. Clone Repository
+#### 1. Clone Repository
 
 ```bash
-git clone https://github.com/<YOUR_USERNAME>/order-processing-vps-infra.git
+git clone https://github.com/ergon73/order-processing-vps-infra.git
 cd order-processing-vps-infra
 ```
 
-### 2. Configure Environment
+#### 2. Configure Environment
 
 ```bash
 cp .env.example .env
@@ -130,7 +136,7 @@ POSTGRES_PASSWORD=your_strong_password_here
 PGADMIN_PASSWORD=another_strong_password
 ```
 
-### 3. Create Registry User
+#### 3. Create Registry User
 
 ```bash
 cd registry
@@ -139,13 +145,13 @@ chmod +x create-user.sh
 cd ..
 ```
 
-### 4. Launch Services
+#### 4. Launch Services
 
 ```bash
 docker compose up -d
 ```
 
-### 5. Verify Deployment
+#### 5. Verify Deployment
 
 ```bash
 docker ps  # All containers should be "Up"
@@ -158,7 +164,7 @@ docker ps  # All containers should be "Up"
 
 ---
 
-## 🔌 Services & Ports
+### 🔌 Services & Ports
 
 | Service | Container Name | Internal Port | External Port | Access |
 |---------|---------------|---------------|---------------|--------|
@@ -172,9 +178,9 @@ docker ps  # All containers should be "Up"
 
 ---
 
-## ⚙️ Configuration
+### ⚙️ Configuration
 
-### Environment Variables (.env)
+#### Environment Variables (.env)
 
 ```env
 # PostgreSQL Configuration
@@ -187,7 +193,7 @@ PGADMIN_EMAIL=admin@example.com    # pgAdmin login email
 PGADMIN_PASSWORD=***               # pgAdmin password (CHANGE!)
 ```
 
-### Docker Compose Services
+#### Docker Compose Services
 
 Edit `docker-compose.yml` to customize:
 - **Resource limits**: Add `deploy.resources.limits` for CPU/memory
@@ -195,7 +201,7 @@ Edit `docker-compose.yml` to customize:
 - **Volumes**: Change volume mount paths
 - **Environment**: Add service-specific env vars
 
-### Nginx Configuration
+#### Nginx Configuration
 
 - **Main config**: `nginx/nginx.conf`
 - **Server blocks**: `nginx/conf.d/default.conf`
@@ -213,9 +219,9 @@ server {
 
 ---
 
-## 📦 Deployment
+### 📦 Deployment
 
-### Initial Deployment
+#### Initial Deployment
 
 ```bash
 # On VPS
@@ -234,7 +240,7 @@ cd registry && ./create-user.sh admin "password" && cd ..
 docker compose up -d
 ```
 
-### Updating Services
+#### Updating Services
 
 ```bash
 docker compose pull          # Pull latest images
@@ -243,13 +249,13 @@ docker compose up -d         # Recreate updated containers
 
 Or let Watchtower do it automatically (every 5 minutes).
 
-### Backup Database
+#### Backup Database
 
 ```bash
 docker exec postgres pg_dump -U app_user app_db > backup.sql
 ```
 
-### Restore Database
+#### Restore Database
 
 ```bash
 cat backup.sql | docker exec -i postgres psql -U app_user app_db
@@ -257,9 +263,9 @@ cat backup.sql | docker exec -i postgres psql -U app_user app_db
 
 ---
 
-## 🔐 Security
+### 🔐 Security
 
-### Implemented Measures
+#### Implemented Measures
 
 ✅ **PostgreSQL**: No external ports, only internal Docker network  
 ✅ **SSH**: Key-based authentication, password login disabled  
@@ -268,7 +274,7 @@ cat backup.sql | docker exec -i postgres psql -U app_user app_db
 ✅ **Healthchecks**: Automatic service monitoring  
 ✅ **Least Privilege**: Containers run as non-root where possible  
 
-### Production Recommendations
+#### Production Recommendations
 
 🔒 **Enable HTTPS**: Use Let's Encrypt for SSL certificates  
 🔒 **Firewall**: Restrict ports with `ufw` or cloud provider firewall  
@@ -279,9 +285,9 @@ cat backup.sql | docker exec -i postgres psql -U app_user app_db
 
 ---
 
-## 🐛 Troubleshooting
+### 🐛 Troubleshooting
 
-### Container Restarting
+#### Container Restarting
 
 ```bash
 # Check logs
@@ -293,7 +299,7 @@ docker compose logs --tail=200 <service_name>
 # - pgadmin: Wrong PGADMIN_PASSWORD
 ```
 
-### Registry Auth Failing
+#### Registry Auth Failing
 
 ```bash
 # Verify htpasswd file exists
@@ -306,7 +312,7 @@ rm auth/htpasswd
 docker compose restart registry
 ```
 
-### pgAdmin Can't Connect to PostgreSQL
+#### pgAdmin Can't Connect to PostgreSQL
 
 - **Host** must be `postgres` (container name), NOT `localhost` or `127.0.0.1`
 - **Port** is `5432`
@@ -315,7 +321,7 @@ docker compose restart registry
   docker network inspect order-processing-vps-infra_backend_network
   ```
 
-### No Space Left
+#### No Space Left
 
 ```bash
 df -h                    # Check disk usage
@@ -323,7 +329,7 @@ docker system df         # Check Docker usage
 docker system prune -a   # Clean unused resources
 ```
 
-### Watchtower Compatibility
+#### Watchtower Compatibility
 
 **Note**: This project uses `nickfedor/watchtower` fork instead of the original `containrrr/watchtower` because:
 - Original Watchtower was archived (Dec 17, 2025) and incompatible with Docker 29
@@ -340,7 +346,7 @@ docker compose config | grep watchtower
 
 ---
 
-## 📁 Project Structure
+### 📁 Project Structure
 
 ```
 order-processing-vps-infra/
@@ -348,9 +354,7 @@ order-processing-vps-infra/
 ├── .env.example                # Environment template
 ├── .env                        # Actual secrets (not in git)
 ├── .gitignore                  # Git exclusions
-├── .cursorrules                # Cursor AI rules
 ├── README.md                   # This file
-├── human-readme.md             # Detailed setup guide (RU)
 ├── genai-readme.md             # Cursor Agent spec
 ├── nginx/
 │   ├── nginx.conf              # Nginx main config
@@ -367,7 +371,7 @@ order-processing-vps-infra/
 
 ---
 
-## 🤝 Contributing
+### 🤝 Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -384,21 +388,21 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📄 License
+### 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
-## 👤 Author
+### 👤 Author
 
 **Georgy**  
 Student @ Vibe-Coding Course  
-📧 Contact: [GitHub Profile](https://github.com/<YOUR_USERNAME>)
+📧 Contact: [GitHub Profile](https://github.com/ergon73)
 
 ---
 
-## 🙏 Acknowledgments
+### 🙏 Acknowledgments
 
 - **Course**: [ZeroCoder - Vibe-Coding](https://zerocoder.ru)
 - **Instructor**: Module 8 - Business Process Automation
@@ -406,7 +410,7 @@ Student @ Vibe-Coding Course
 
 ---
 
-## 📊 Project Status
+### 📊 Project Status
 
 ✅ **Stage 1**: Infrastructure setup (nginx, postgres, pgadmin, registry, watchtower)  
 🔜 **Stage 2**: Backend application deployment (coming soon)  
@@ -414,4 +418,413 @@ Student @ Vibe-Coding Course
 
 ---
 
-**⭐ If this project helped you, please give it a star!**
+## 🇷🇺 Русский
+
+Готовая к продакшену VPS инфраструктура для веб-приложения обработки заказов. Развертывается через Docker Compose на Ubuntu 22.04 VPS с Nginx, PostgreSQL, pgAdmin, приватным Docker Registry и автоматическими обновлениями.
+
+> 🎓 **Учебный проект**: Часть курса "Vibe-Coding" - Модуль 8, Кейс 3  
+> Демонстрирует современные DevOps практики: контейнеризация Docker, безопасный SSH доступ, инфраструктура как код.
+
+---
+
+### 📋 Содержание
+
+- [Возможности](#-возможности)
+- [Архитектура](#-архитектура)
+- [Технологический стек](#-технологический-стек)
+- [Требования](#-требования)
+- [Быстрый старт](#-быстрый-старт)
+- [Сервисы и порты](#-сервисы-и-порты)
+- [Конфигурация](#-конфигурация)
+- [Развертывание](#-развертывание)
+- [Безопасность](#-безопасность)
+- [Решение проблем](#-решение-проблем)
+- [Структура проекта](#-структура-проекта)
+- [Вклад в проект](#-вклад-в-проект)
+- [Лицензия](#-лицензия)
+
+---
+
+### ✨ Возможности
+
+- **🐳 Полная контейнеризация**: Все сервисы работают в Docker контейнерах
+- **🔐 Безопасность по умолчанию**: PostgreSQL изолирован во внутренней сети, доступ только по SSH-ключу
+- **📦 Приватный Registry**: Собственный Docker registry с аутентификацией htpasswd
+- **🔄 Автообновления**: Watchtower автоматически обновляет контейнеры
+- **⚡ Nginx Reverse Proxy**: Высокопроизводительный веб-сервер и балансировщик нагрузки
+- **🎛️ Управление БД**: Веб-интерфейс pgAdmin
+- **📊 Готово к продакшену**: Healthchecks, политики перезапуска, персистентные тома
+
+---
+
+### 🏛️ Архитектура
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        VPS (Ubuntu 22.04)                   │
+│  ┌───────────────────────────────────────────────────────┐  │
+│  │                   Docker Compose                      │  │
+│  │                                                        │  │
+│  │  ┌────────────┐     ┌──────────────┐                 │  │
+│  │  │   Nginx    │────▶│  PostgreSQL  │                 │  │
+│  │  │  (Порт 80) │     │  (Внутренний)│                 │  │
+│  │  └────────────┘     └──────────────┘                 │  │
+│  │        │                    │                         │  │
+│  │        │              ┌─────▼──────┐                 │  │
+│  │        │              │  pgAdmin   │                 │  │
+│  │        │              │ (Порт 5050)│                 │  │
+│  │        │              └────────────┘                 │  │
+│  │        │                                              │  │
+│  │  ┌─────▼──────┐     ┌──────────────┐                │  │
+│  │  │  Registry  │     │  Watchtower  │                │  │
+│  │  │(Порт 5000) │     │(Автообновление)│                │  │
+│  │  └────────────┘     └──────────────┘                │  │
+│  │                                                        │  │
+│  │  [Frontend Network] ←→ [Backend Network]             │  │
+│  └───────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Ключевые принципы**:
+- **Nginx** = Публичная точка входа (порт 80), отдает статические файлы, проксирует запросы
+- **PostgreSQL** = База данных, БЕЗ внешних портов, доступна только через внутреннюю Docker сеть
+- **pgAdmin** = UI для БД, порт 5050 (ограничить в продакшене!)
+- **Registry** = Приватное хранилище Docker образов, порт 5000 с аутентификацией htpasswd
+- **Watchtower** = Мониторит и автоматически обновляет контейнеры
+
+---
+
+### 🛠️ Технологический стек
+
+| Компонент | Технология | Версия | Назначение |
+|-----------|-----------|---------|------------|
+| **Веб-сервер** | Nginx | 1.27-alpine | Reverse proxy, статические файлы |
+| **База данных** | PostgreSQL | 16-alpine | Хранение данных |
+| **Админ БД** | pgAdmin 4 | 8.2 | Веб-интерфейс управления БД |
+| **Container Registry** | Docker Registry | 2 | Приватное хранилище образов |
+| **Автообновление** | Watchtower (форк nickfedor) | latest | Жизненный цикл контейнеров (совместим с Docker 29) |
+| **Оркестрация** | Docker Compose | v2+ | Управление сервисами |
+| **ОС** | Ubuntu Server | 22.04 LTS | Операционная система VPS |
+
+---
+
+### 📋 Требования
+
+#### Локальная машина (Windows 11)
+- **Cursor IDE** с расширением Remote-SSH
+- **SSH клиент** (встроен в Windows 10/11)
+- **Git** (для клонирования репозитория)
+
+#### VPS сервер
+- **Ubuntu 22.04 LTS** (минимум 1 CPU, 768 MB RAM, 7 GB SSD)
+- **Публичный IPv4 адрес**
+- **Доступ root** (или пользователь с sudo)
+- **Открытые порты**: 22 (SSH), 80 (HTTP), 5000 (Registry), 5050 (pgAdmin)
+
+---
+
+### 🚀 Быстрый старт
+
+#### 1. Клонирование репозитория
+
+```bash
+git clone https://github.com/ergon73/order-processing-vps-infra.git
+cd order-processing-vps-infra
+```
+
+#### 2. Настройка окружения
+
+```bash
+cp .env.example .env
+nano .env
+```
+
+Установите сильные пароли (минимум 12 символов):
+```env
+POSTGRES_PASSWORD=ваш_сильный_пароль
+PGADMIN_PASSWORD=другой_сильный_пароль
+```
+
+#### 3. Создание пользователя Registry
+
+```bash
+cd registry
+chmod +x create-user.sh
+./create-user.sh admin "ВашПарольДляRegistry"
+cd ..
+```
+
+#### 4. Запуск сервисов
+
+```bash
+docker compose up -d
+```
+
+#### 5. Проверка развертывания
+
+```bash
+docker ps  # Все контейнеры должны быть в статусе "Up"
+```
+
+**Доступ к сервисам**:
+- Веб: `http://<VPS_IP>/`
+- pgAdmin: `http://<VPS_IP>:5050`
+- Registry: `http://<VPS_IP>:5000/v2/`
+
+---
+
+### 🔌 Сервисы и порты
+
+| Сервис | Имя контейнера | Внутренний порт | Внешний порт | Доступ |
+|--------|---------------|-----------------|--------------|--------|
+| **Nginx** | `nginx` | 80 | 80 | Публичный |
+| **PostgreSQL** | `postgres` | 5432 | ❌ Не открыт | Только внутренний |
+| **pgAdmin** | `pgadmin` | 80 | 5050 | Публичный (dev) |
+| **Registry** | `registry` | 5000 | 5000 | Публичный (с аутентификацией) |
+| **Watchtower** | `watchtower` | - | - | Фоновый |
+
+⚠️ **Безопасность в продакшене**: В продакшен окружениях ограничьте доступ к портам `5050` и `5000` только через VPN/доверенные IP.
+
+---
+
+### ⚙️ Конфигурация
+
+#### Переменные окружения (.env)
+
+```env
+# Конфигурация PostgreSQL
+POSTGRES_DB=app_db          # Имя базы данных
+POSTGRES_USER=app_user      # Пользователь БД
+POSTGRES_PASSWORD=***       # Пароль БД (ИЗМЕНИТЕ!)
+
+# Конфигурация pgAdmin
+PGADMIN_EMAIL=admin@example.com    # Email для входа в pgAdmin
+PGADMIN_PASSWORD=***               # Пароль pgAdmin (ИЗМЕНИТЕ!)
+```
+
+#### Сервисы Docker Compose
+
+Редактируйте `docker-compose.yml` для настройки:
+- **Лимиты ресурсов**: Добавьте `deploy.resources.limits` для CPU/памяти
+- **Сети**: Измените конфигурации сетей
+- **Тома**: Измените пути монтирования томов
+- **Окружение**: Добавьте переменные окружения для сервисов
+
+#### Конфигурация Nginx
+
+- **Основной конфиг**: `nginx/nginx.conf`
+- **Блоки серверов**: `nginx/conf.d/default.conf`
+- **Статические файлы**: `nginx/html/`
+
+Пример: Добавление HTTPS (требуются SSL сертификаты):
+```nginx
+server {
+    listen 443 ssl http2;
+    ssl_certificate /etc/nginx/ssl/cert.pem;
+    ssl_certificate_key /etc/nginx/ssl/key.pem;
+    # ... остальная конфигурация
+}
+```
+
+---
+
+### 📦 Развертывание
+
+#### Первоначальное развертывание
+
+```bash
+# На VPS
+mkdir -p /root/order-processing-vps-infra
+cd /root/order-processing-vps-infra
+
+# Копирование файлов или клонирование репозитория
+git clone <repo_url> .
+
+# Настройка
+cp .env.example .env
+nano .env  # Заполните пароли
+cd registry && ./create-user.sh admin "пароль" && cd ..
+
+# Запуск
+docker compose up -d
+```
+
+#### Обновление сервисов
+
+```bash
+docker compose pull          # Скачать последние образы
+docker compose up -d         # Пересоздать обновленные контейнеры
+```
+
+Или позвольте Watchtower делать это автоматически (каждые 5 минут).
+
+#### Резервное копирование БД
+
+```bash
+docker exec postgres pg_dump -U app_user app_db > backup.sql
+```
+
+#### Восстановление БД
+
+```bash
+cat backup.sql | docker exec -i postgres psql -U app_user app_db
+```
+
+---
+
+### 🔐 Безопасность
+
+#### Реализованные меры
+
+✅ **PostgreSQL**: Без внешних портов, только внутренняя Docker сеть  
+✅ **SSH**: Аутентификация по ключу, вход по паролю отключен  
+✅ **Registry**: Аутентификация htpasswd  
+✅ **Секреты**: Файл `.env` исключен из git  
+✅ **Healthchecks**: Автоматический мониторинг сервисов  
+✅ **Минимальные привилегии**: Контейнеры запускаются от non-root где возможно  
+
+#### Рекомендации для продакшена
+
+🔒 **Включите HTTPS**: Используйте Let's Encrypt для SSL сертификатов  
+🔒 **Файрвол**: Ограничьте порты с помощью `ufw` или файрвола облачного провайдера  
+🔒 **VPN/Bastion**: Скрывайте pgAdmin/Registry за VPN или SSH туннелем  
+🔒 **Мониторинг**: Добавьте Prometheus + Grafana для метрик  
+🔒 **Резервные копии**: Автоматические ежедневные бэкапы PostgreSQL  
+🔒 **Управление секретами**: Используйте Docker Secrets или Vault  
+
+---
+
+### 🐛 Решение проблем
+
+#### Контейнер перезапускается
+
+```bash
+# Проверьте логи
+docker compose logs --tail=200 <имя_сервиса>
+
+# Частые проблемы:
+# - postgres: Неправильный POSTGRES_PASSWORD в .env
+# - registry: Отсутствует файл auth/htpasswd
+# - pgadmin: Неправильный PGADMIN_PASSWORD
+```
+
+#### Ошибка аутентификации Registry
+
+```bash
+# Проверьте существование файла htpasswd
+ls -l registry/auth/htpasswd
+
+# Пересоздайте пользователя
+cd registry
+rm auth/htpasswd
+./create-user.sh admin "новый_пароль"
+docker compose restart registry
+```
+
+#### pgAdmin не подключается к PostgreSQL
+
+- **Host** должен быть `postgres` (имя контейнера!), НЕ `localhost` или `127.0.0.1`
+- **Port** это `5432`
+- Проверьте, что оба контейнера в одной сети:
+  ```bash
+  docker network inspect order-processing-vps-infra_backend_network
+  ```
+
+#### Нет места на диске
+
+```bash
+df -h                    # Проверка использования диска
+docker system df         # Использование Docker
+docker system prune -a   # Очистка неиспользуемых ресурсов
+```
+
+#### Совместимость Watchtower
+
+**Примечание**: Этот проект использует форк `nickfedor/watchtower` вместо оригинального `containrrr/watchtower`, потому что:
+- Оригинальный Watchtower был архивирован (17 дек 2025) и несовместим с Docker 29
+- Форк поддерживает Docker API 1.44+, требуемый для Docker 29
+- Вся функциональность остается той же (автообновления каждые 5 минут)
+
+Если видите ошибки версии API с Watchtower, убедитесь, что используете форк:
+```bash
+# Проверьте текущий образ
+docker compose config | grep watchtower
+
+# Должно показать: image: nickfedor/watchtower:latest
+```
+
+---
+
+### 📁 Структура проекта
+
+```
+order-processing-vps-infra/
+├── docker-compose.yml          # Основной файл оркестрации
+├── .env.example                # Шаблон переменных окружения
+├── .env                        # Фактические секреты (не в git)
+├── .gitignore                  # Исключения для git
+├── README.md                   # Этот файл
+├── genai-readme.md             # Спецификация для Cursor Agent
+├── nginx/
+│   ├── nginx.conf              # Основной конфиг Nginx
+│   ├── conf.d/
+│   │   └── default.conf        # Конфигурация блоков серверов
+│   ├── html/
+│   │   └── index.html          # Статическая главная страница
+│   └── ssl/                    # SSL сертификаты (не в git)
+└── registry/
+    ├── create-user.sh          # Скрипт создания пользователя Registry
+    └── auth/
+        └── htpasswd            # Учетные данные Registry (не в git)
+```
+
+---
+
+### 🤝 Вклад в проект
+
+Вклад приветствуется! Пожалуйста, следуйте этим шагам:
+
+1. Сделайте форк репозитория
+2. Создайте ветку для функции: `git checkout -b feature/amazing-feature`
+3. Закоммитьте изменения: `git commit -m 'Добавить amazing feature'`
+4. Отправьте в ветку: `git push origin feature/amazing-feature`
+5. Откройте Pull Request
+
+**Стиль кода**:
+- Используйте shellcheck для bash скриптов
+- Валидируйте YAML с yamllint
+- Тестируйте локально перед PR
+
+---
+
+### 📄 Лицензия
+
+Этот проект лицензирован под MIT License - см. файл [LICENSE](LICENSE) для деталей.
+
+---
+
+### 👤 Автор
+
+**Georgy**  
+Студент курса Vibe-Coding  
+📧 Контакт: [GitHub Profile](https://github.com/ergon73)
+
+---
+
+### 🙏 Благодарности
+
+- **Курс**: [ZeroCoder - Vibe-Coding](https://zerocoder.ru)
+- **Преподаватель**: Модуль 8 - Автоматизация бизнес-процессов
+- **Инструменты**: Docker, Nginx, PostgreSQL, Watchtower
+
+---
+
+### 📊 Статус проекта
+
+✅ **Этап 1**: Настройка инфраструктуры (nginx, postgres, pgadmin, registry, watchtower)  
+🔜 **Этап 2**: Развертывание backend приложения (скоро)  
+🔜 **Этап 3**: Интеграция frontend и админ-панель
+
+---
+
+**⭐ Если этот проект помог вам, пожалуйста, поставьте звезду!**
