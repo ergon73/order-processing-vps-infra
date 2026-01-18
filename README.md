@@ -392,10 +392,7 @@ order-processing-vps-infra/
 ├── .env.example                # Environment template
 ├── .env                        # Actual secrets (not in git)
 ├── .gitignore                  # Git exclusions
-├── README.md                   # This file
-├── README-2.md                 # Part 2 specific documentation
-├── genai-readme-2.md           # Cursor Agent spec (Part 2)
-├── human-readme-2.md           # Human-readable guide (Part 2)
+├── README.md                   # This file (main documentation)
 ├── nginx/
 │   ├── nginx.conf              # Nginx main config
 │   ├── conf.d/
@@ -870,9 +867,6 @@ order-processing-vps-infra/
 ├── .env                        # Фактические секреты (не в git)
 ├── .gitignore                  # Исключения для git
 ├── README.md                   # Этот файл (основная документация)
-├── README-2.md                 # Документация для Части 2
-├── genai-readme-2.md           # Спецификация для Cursor Agent (Часть 2)
-├── human-readme-2.md           # Руководство для человека (Часть 2)
 ├── nginx/
 │   ├── nginx.conf              # Основной конфиг Nginx
 │   ├── conf.d/
