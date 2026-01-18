@@ -14,10 +14,27 @@ frontend/dist/
 package-lock.json
 
 # Локальные файлы (не публикуем в GitHub)
-human-readme.md
 .cursorrules
 .cursorrules.old
+genai-readme.md
 genai-readme-2.md
+human-readme.md
 human-readme-2.md
 README-2.md
-.cursorrules
+README-3.md
+CHECKLIST_BEFORE_SSL.md
+URLS_FOR_CHECK.md
+ANALYSIS.md
+ARCHITECTURE_ANALYSIS.md
+PRIORITY_EXPLANATION.md
+SCREENSHOTS_CHECKLIST.md
+DEV_ACCESS.md
+PGADMIN_SCREENSHOT.md
+pgadmin_query.sql
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
