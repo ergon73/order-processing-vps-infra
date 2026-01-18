@@ -1,13 +1,17 @@
+
+.cursorrules
+.cursorrules.old
+# Локальные файлы (не публикуем в GitHub)
+.DS_Store
 .env
 .env.local
-registry/auth/htpasswd
-nginx/ssl/*
-*.pem
+genai-readme-2.md
+human-readme-2.md
+human-readme.md
 *.key
 *.log
-.DS_Store
+nginx/ssl/*
+*.pem
+README-2.md
+registry/auth/htpasswd
 .vscode/
-
-# Локальные файлы (не публикуем в GitHub)
-human-readme.md
-.cursorrules
