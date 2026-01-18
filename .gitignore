@@ -8,6 +8,11 @@ nginx/ssl/*
 .DS_Store
 .vscode/
 
+# Frontend build artifacts
+frontend/node_modules/
+frontend/dist/
+package-lock.json
+
 # Локальные файлы (не публикуем в GitHub)
 human-readme.md
 .cursorrules
@@ -15,3 +20,4 @@ human-readme.md
 genai-readme-2.md
 human-readme-2.md
 README-2.md
+.cursorrules

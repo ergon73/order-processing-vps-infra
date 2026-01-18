@@ -11,10 +11,10 @@
 
 ## 🇬🇧 English
 
-Production-ready VPS infrastructure for order processing web application. Deployed via Docker Compose on Ubuntu 22.04 VPS with Nginx, PostgreSQL, pgAdmin, private Docker Registry, and automated updates.
+Production-ready VPS infrastructure and web application for order processing. Full-stack solution with FastAPI backend, modern frontend, and PostgreSQL database. Deployed via Docker Compose on Ubuntu 22.04 VPS with Nginx, PostgreSQL, pgAdmin, private Docker Registry, and automated updates.
 
-> 🎓 **Educational Project**: Part of "Vibe-Coding" course - Module 8, Case 3  
-> Demonstrates modern DevOps practices: Docker containerization, secure SSH access, infrastructure as code.
+> 🎓 **Educational Project**: Part of "Vibe-Coding" course - Module 8, Case 3 (Part 2)  
+> Demonstrates modern DevOps practices: Docker containerization, secure SSH access, infrastructure as code, RESTful API, and frontend build pipelines.
 
 ---
 
@@ -39,10 +39,14 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 ### ✨ Features
 
 - **🐳 Fully Dockerized**: All services run in Docker containers
+- **🚀 Full-Stack Application**: FastAPI backend + Webpack frontend
+- **🎨 Modern UI**: "Elite style" frontend with smooth animations and elegant design
+- **📡 RESTful API**: FastAPI with automatic OpenAPI/Swagger documentation
+- **🗄️ Database**: PostgreSQL with SQLAlchemy ORM
 - **🔐 Secure by Default**: PostgreSQL isolated in internal network, SSH key-only access
 - **📦 Private Registry**: Self-hosted Docker registry with htpasswd authentication
 - **🔄 Auto-Updates**: Watchtower automatically updates containers
-- **⚡ Nginx Reverse Proxy**: High-performance web server and load balancer
+- **⚡ Nginx Reverse Proxy**: High-performance web server, API proxy, and static file serving
 - **🎛️ Database Management**: Web-based pgAdmin interface
 - **📊 Production-Ready**: Healthchecks, restart policies, volume persistence
 
@@ -56,20 +60,35 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 │  ┌───────────────────────────────────────────────────────┐  │
 │  │                   Docker Compose                      │  │
 │  │                                                        │  │
-│  │  ┌────────────┐     ┌──────────────┐                 │  │
-│  │  │   Nginx    │────▶│  PostgreSQL  │                 │  │
-│  │  │  (Port 80) │     │   (Internal) │                 │  │
-│  │  └────────────┘     └──────────────┘                 │  │
-│  │        │                    │                         │  │
-│  │        │              ┌─────▼──────┐                 │  │
-│  │        │              │  pgAdmin   │                 │  │
-│  │        │              │ (Port 5050)│                 │  │
-│  │        │              └────────────┘                 │  │
-│  │        │                                              │  │
-│  │  ┌─────▼──────┐     ┌──────────────┐                │  │
-│  │  │  Registry  │     │  Watchtower  │                │  │
-│  │  │(Port 5000) │     │(Auto-Update) │                │  │
-│  │  └────────────┘     └──────────────┘                │  │
+│  │           ┌──────────────────────┐                   │  │
+│  │           │   Nginx (Port 80)    │                   │  │
+│  │           │  Reverse Proxy +     │                   │  │
+│  │           │  Static Files        │                   │  │
+│  │           └────┬─────────────┬───┘                   │  │
+│  │                │             │                        │  │
+│  │    Static      │             │ /api/*                 │  │
+│  │  (frontend/)   │             ▼                        │  │
+│  │                │    ┌──────────────────┐             │  │
+│  │                │    │  FastAPI Backend │             │  │
+│  │                │    │  (Private :8000) │             │  │
+│  │                │    └─────────┬────────┘             │  │
+│  │                │              │                       │  │
+│  │                │              │ SQL                   │  │
+│  │                │              ▼                       │  │
+│  │                │    ┌──────────────────┐             │  │
+│  │                │    │   PostgreSQL     │             │  │
+│  │                │    │   (Internal)     │             │  │
+│  │                │    └────────┬─────────┘             │  │
+│  │                │             │                        │  │
+│  │                │      ┌──────▼──────┐                │  │
+│  │                │      │  pgAdmin    │                │  │
+│  │                │      │ (Port 5050) │                │  │
+│  │                │      └─────────────┘                │  │
+│  │                │                                      │  │
+│  │        ┌───────▼──────┐     ┌──────────────┐        │  │
+│  │        │  Registry    │     │  Watchtower  │        │  │
+│  │        │(Port 5000)   │     │(Auto-Update) │        │  │
+│  │        └──────────────┘     └──────────────┘        │  │
 │  │                                                        │  │
 │  │  [Frontend Network] ←→ [Backend Network]             │  │
 │  └───────────────────────────────────────────────────────┘  │
@@ -77,7 +96,9 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 ```
 
 **Key Principles**:
-- **Nginx** = Public entrypoint (port 80), serves static files, proxies requests
+- **Nginx** = Public entrypoint (port 80), serves static files from `frontend/dist/`, proxies `/api/*` to backend
+- **FastAPI Backend** = RESTful API (private :8000), not exposed externally
+- **Frontend** = Webpack-built static files, "elite style" design
 - **PostgreSQL** = Database, NO external ports, only accessible via Docker internal network
 - **pgAdmin** = Database UI, port 5050 (restrict in production!)
 - **Registry** = Private Docker image storage, port 5000 with htpasswd auth
@@ -89,6 +110,11 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 
 | Component | Technology | Version | Purpose |
 |-----------|-----------|---------|---------|
+| **Backend** | FastAPI | latest | RESTful API, OpenAPI/Swagger docs |
+| **Backend Language** | Python | 3.11 | Backend application logic |
+| **ORM** | SQLAlchemy | latest | Database ORM |
+| **Frontend** | Webpack + Vanilla JS | 5.x | Frontend build tool |
+| **Frontend Runtime** | Node.js | 20+ | Frontend build environment |
 | **Web Server** | Nginx | 1.27-alpine | Reverse proxy, static files |
 | **Database** | PostgreSQL | 16-alpine | Data persistence |
 | **DB Admin** | pgAdmin 4 | 8.2 | Database management UI |
@@ -107,10 +133,11 @@ Production-ready VPS infrastructure for order processing web application. Deploy
 - **Git** (for cloning repository)
 
 #### VPS Server
-- **Ubuntu 22.04 LTS** (minimal 1 CPU, 768 MB RAM, 7 GB SSD)
+- **Ubuntu 22.04 LTS** (recommended 2 CPU, 2 GB RAM, 10 GB SSD)
 - **Public IPv4 address**
 - **Root access** (or sudo user)
 - **Open ports**: 22 (SSH), 80 (HTTP), 5000 (Registry), 5050 (pgAdmin)
+- **Node.js 20+** and **npm** (for frontend build)
 
 ---
 
@@ -145,22 +172,33 @@ chmod +x create-user.sh
 cd ..
 ```
 
-#### 4. Launch Services
+#### 4. Build Frontend
 
 ```bash
-docker compose up -d
+cd frontend
+npm ci
+npm run build
+cd ..
 ```
 
-#### 5. Verify Deployment
+#### 5. Launch Services
 
 ```bash
-docker ps  # All containers should be "Up"
+docker compose up -d --build
+```
+
+#### 6. Verify Deployment
+
+```bash
+docker compose ps  # All containers should be "Up"
 ```
 
 **Access Services**:
-- Web: `http://<VPS_IP>/`
-- pgAdmin: `http://<VPS_IP>:5050`
-- Registry: `http://<VPS_IP>:5000/v2/`
+- **Frontend**: `http://<VPS_IP>/`
+- **Swagger UI**: `http://<VPS_IP>/api/docs`
+- **API**: `http://<VPS_IP>/api/`
+- **pgAdmin**: `http://<VPS_IP>:5050`
+- **Registry**: `http://<VPS_IP>:5000/v2/`
 
 ---
 
@@ -355,14 +393,38 @@ order-processing-vps-infra/
 ├── .env                        # Actual secrets (not in git)
 ├── .gitignore                  # Git exclusions
 ├── README.md                   # This file
-├── genai-readme.md             # Cursor Agent spec
+├── README-2.md                 # Part 2 specific documentation
+├── genai-readme-2.md           # Cursor Agent spec (Part 2)
+├── human-readme-2.md           # Human-readable guide (Part 2)
 ├── nginx/
 │   ├── nginx.conf              # Nginx main config
 │   ├── conf.d/
-│   │   └── default.conf        # Server block config
-│   ├── html/
-│   │   └── index.html          # Static landing page
+│   │   └── default.conf        # Server block config (API proxy + static files)
 │   └── ssl/                    # SSL certificates (not in git)
+├── backend/                    # FastAPI backend application
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── main.py                 # FastAPI app entry point
+│   ├── core/
+│   │   └── database.py         # Database connection
+│   ├── models/                 # SQLAlchemy models
+│   │   ├── admin_settings.py
+│   │   ├── applications.py
+│   │   └── behavior_metrics.py
+│   └── routes/                 # API routes
+│       ├── admin_settings.py
+│       └── applications.py
+├── frontend/                   # Webpack frontend application
+│   ├── package.json
+│   ├── webpack.config.js
+│   ├── src/
+│   │   ├── index.html          # Main HTML template
+│   │   ├── index.js            # Application logic
+│   │   └── styles.css          # "Elite style" CSS
+│   └── dist/                   # Build output (generated, not in git)
+│       ├── index.html
+│       ├── main.*.css          # Extracted CSS
+│       └── main.*.js           # Bundled JavaScript
 └── registry/
     ├── create-user.sh          # Registry user creation script
     └── auth/
@@ -413,17 +475,21 @@ Student @ Vibe-Coding Course
 ### 📊 Project Status
 
 ✅ **Stage 1**: Infrastructure setup (nginx, postgres, pgadmin, registry, watchtower)  
-🔜 **Stage 2**: Backend application deployment (coming soon)  
-🔜 **Stage 3**: Frontend integration & admin panel
+✅ **Stage 2**: Backend application deployment (FastAPI + PostgreSQL + SQLAlchemy)  
+✅ **Stage 3**: Frontend integration (Webpack + Vanilla JS, "elite style" design)
+
+**Current Version**: Part 2 - Full-stack application with backend and frontend
+
+**Status**: ✅ **Production Ready** - All components functional, tested, and deployed
 
 ---
 
 ## 🇷🇺 Русский
 
-Готовая к продакшену VPS инфраструктура для веб-приложения обработки заказов. Развертывается через Docker Compose на Ubuntu 22.04 VPS с Nginx, PostgreSQL, pgAdmin, приватным Docker Registry и автоматическими обновлениями.
+Готовая к продакшену VPS инфраструктура и веб-приложение для обработки заказов. Полноценное full-stack решение с FastAPI backend, современным frontend и PostgreSQL базой данных. Развертывается через Docker Compose на Ubuntu 22.04 VPS с Nginx, PostgreSQL, pgAdmin, приватным Docker Registry и автоматическими обновлениями.
 
-> 🎓 **Учебный проект**: Часть курса "Vibe-Coding" - Модуль 8, Кейс 3  
-> Демонстрирует современные DevOps практики: контейнеризация Docker, безопасный SSH доступ, инфраструктура как код.
+> 🎓 **Учебный проект**: Часть курса "Vibe-Coding" - Модуль 8, Кейс 3 (Часть 2)  
+> Демонстрирует современные DevOps практики: контейнеризация Docker, безопасный SSH доступ, инфраструктура как код, RESTful API и frontend build pipelines.
 
 ---
 
@@ -448,10 +514,14 @@ Student @ Vibe-Coding Course
 ### ✨ Возможности
 
 - **🐳 Полная контейнеризация**: Все сервисы работают в Docker контейнерах
+- **🚀 Full-Stack Приложение**: FastAPI backend + Webpack frontend
+- **🎨 Современный UI**: "Элитный" дизайн frontend с плавными анимациями
+- **📡 RESTful API**: FastAPI с автоматической документацией OpenAPI/Swagger
+- **🗄️ База данных**: PostgreSQL с ORM SQLAlchemy
 - **🔐 Безопасность по умолчанию**: PostgreSQL изолирован во внутренней сети, доступ только по SSH-ключу
 - **📦 Приватный Registry**: Собственный Docker registry с аутентификацией htpasswd
 - **🔄 Автообновления**: Watchtower автоматически обновляет контейнеры
-- **⚡ Nginx Reverse Proxy**: Высокопроизводительный веб-сервер и балансировщик нагрузки
+- **⚡ Nginx Reverse Proxy**: Высокопроизводительный веб-сервер, проксирование API и раздача статики
 - **🎛️ Управление БД**: Веб-интерфейс pgAdmin
 - **📊 Готово к продакшену**: Healthchecks, политики перезапуска, персистентные тома
 
@@ -465,20 +535,36 @@ Student @ Vibe-Coding Course
 │  ┌───────────────────────────────────────────────────────┐  │
 │  │                   Docker Compose                      │  │
 │  │                                                        │  │
-│  │  ┌────────────┐     ┌──────────────┐                 │  │
-│  │  │   Nginx    │────▶│  PostgreSQL  │                 │  │
-│  │  │  (Порт 80) │     │  (Внутренний)│                 │  │
-│  │  └────────────┘     └──────────────┘                 │  │
-│  │        │                    │                         │  │
-│  │        │              ┌─────▼──────┐                 │  │
-│  │        │              │  pgAdmin   │                 │  │
-│  │        │              │ (Порт 5050)│                 │  │
-│  │        │              └────────────┘                 │  │
-│  │        │                                              │  │
-│  │  ┌─────▼──────┐     ┌──────────────┐                │  │
-│  │  │  Registry  │     │  Watchtower  │                │  │
-│  │  │(Порт 5000) │     │(Автообновление)│                │  │
-│  │  └────────────┘     └──────────────┘                │  │
+│  │           ┌──────────────────────┐                   │  │
+│  │           │   Nginx (Порт 80)    │                   │  │
+│  │           │  Reverse Proxy +     │                   │  │
+│  │           │  Статические файлы   │                   │  │
+│  │           └────┬─────────────┬───┘                   │  │
+│  │                │             │                        │  │
+│  │    Статика     │             │ /api/*                 │  │
+│  │  (frontend/)   │             ▼                        │  │
+│  │                │    ┌──────────────────┐             │  │
+│  │                │    │  FastAPI Backend │             │  │
+│  │                │    │  (Внутренний     │             │  │
+│  │                │    │   :8000)         │             │  │
+│  │                │    └─────────┬────────┘             │  │
+│  │                │              │                       │  │
+│  │                │              │ SQL                   │  │
+│  │                │              ▼                       │  │
+│  │                │    ┌──────────────────┐             │  │
+│  │                │    │   PostgreSQL     │             │  │
+│  │                │    │   (Внутренний)   │             │  │
+│  │                │    └────────┬─────────┘             │  │
+│  │                │             │                        │  │
+│  │                │      ┌──────▼──────┐                │  │
+│  │                │      │  pgAdmin    │                │  │
+│  │                │      │ (Порт 5050) │                │  │
+│  │                │      └─────────────┘                │  │
+│  │                │                                      │  │
+│  │        ┌───────▼──────┐     ┌──────────────┐        │  │
+│  │        │  Registry    │     │  Watchtower  │        │  │
+│  │        │(Порт 5000)   │     │(Автообновление)│        │  │
+│  │        └──────────────┘     └──────────────┘        │  │
 │  │                                                        │  │
 │  │  [Frontend Network] ←→ [Backend Network]             │  │
 │  └───────────────────────────────────────────────────────┘  │
@@ -486,7 +572,9 @@ Student @ Vibe-Coding Course
 ```
 
 **Ключевые принципы**:
-- **Nginx** = Публичная точка входа (порт 80), отдает статические файлы, проксирует запросы
+- **Nginx** = Публичная точка входа (порт 80), отдает статические файлы из `frontend/dist/`, проксирует `/api/*` в backend
+- **FastAPI Backend** = RESTful API (внутренний :8000), не открыт внешне
+- **Frontend** = Собранные Webpack статические файлы, "элитный" дизайн
 - **PostgreSQL** = База данных, БЕЗ внешних портов, доступна только через внутреннюю Docker сеть
 - **pgAdmin** = UI для БД, порт 5050 (ограничить в продакшене!)
 - **Registry** = Приватное хранилище Docker образов, порт 5000 с аутентификацией htpasswd
@@ -498,6 +586,11 @@ Student @ Vibe-Coding Course
 
 | Компонент | Технология | Версия | Назначение |
 |-----------|-----------|---------|------------|
+| **Backend** | FastAPI | latest | RESTful API, документация OpenAPI/Swagger |
+| **Язык Backend** | Python | 3.11 | Логика backend приложения |
+| **ORM** | SQLAlchemy | latest | ORM для работы с БД |
+| **Frontend** | Webpack + Vanilla JS | 5.x | Инструмент сборки frontend |
+| **Runtime Frontend** | Node.js | 20+ | Окружение для сборки frontend |
 | **Веб-сервер** | Nginx | 1.27-alpine | Reverse proxy, статические файлы |
 | **База данных** | PostgreSQL | 16-alpine | Хранение данных |
 | **Админ БД** | pgAdmin 4 | 8.2 | Веб-интерфейс управления БД |
@@ -516,10 +609,11 @@ Student @ Vibe-Coding Course
 - **Git** (для клонирования репозитория)
 
 #### VPS сервер
-- **Ubuntu 22.04 LTS** (минимум 1 CPU, 768 MB RAM, 7 GB SSD)
+- **Ubuntu 22.04 LTS** (рекомендуется 2 CPU, 2 GB RAM, 10 GB SSD)
 - **Публичный IPv4 адрес**
 - **Доступ root** (или пользователь с sudo)
 - **Открытые порты**: 22 (SSH), 80 (HTTP), 5000 (Registry), 5050 (pgAdmin)
+- **Node.js 20+** и **npm** (для сборки frontend)
 
 ---
 
@@ -554,22 +648,33 @@ chmod +x create-user.sh
 cd ..
 ```
 
-#### 4. Запуск сервисов
+#### 4. Сборка frontend
 
 ```bash
-docker compose up -d
+cd frontend
+npm ci
+npm run build
+cd ..
 ```
 
-#### 5. Проверка развертывания
+#### 5. Запуск сервисов
 
 ```bash
-docker ps  # Все контейнеры должны быть в статусе "Up"
+docker compose up -d --build
+```
+
+#### 6. Проверка развертывания
+
+```bash
+docker compose ps  # Все контейнеры должны быть в статусе "Up"
 ```
 
 **Доступ к сервисам**:
-- Веб: `http://<VPS_IP>/`
-- pgAdmin: `http://<VPS_IP>:5050`
-- Registry: `http://<VPS_IP>:5000/v2/`
+- **Frontend**: `http://<VPS_IP>/`
+- **Swagger UI**: `http://<VPS_IP>/api/docs`
+- **API**: `http://<VPS_IP>/api/`
+- **pgAdmin**: `http://<VPS_IP>:5050`
+- **Registry**: `http://<VPS_IP>:5000/v2/`
 
 ---
 
@@ -578,6 +683,7 @@ docker ps  # Все контейнеры должны быть в статусе
 | Сервис | Имя контейнера | Внутренний порт | Внешний порт | Доступ |
 |--------|---------------|-----------------|--------------|--------|
 | **Nginx** | `nginx` | 80 | 80 | Публичный |
+| **FastAPI Backend** | `backend` | 8000 | ❌ Не открыт | Только внутренний (через Nginx /api/) |
 | **PostgreSQL** | `postgres` | 5432 | ❌ Не открыт | Только внутренний |
 | **pgAdmin** | `pgadmin` | 80 | 5050 | Публичный (dev) |
 | **Registry** | `registry` | 5000 | 5000 | Публичный (с аутентификацией) |
@@ -763,15 +869,39 @@ order-processing-vps-infra/
 ├── .env.example                # Шаблон переменных окружения
 ├── .env                        # Фактические секреты (не в git)
 ├── .gitignore                  # Исключения для git
-├── README.md                   # Этот файл
-├── genai-readme.md             # Спецификация для Cursor Agent
+├── README.md                   # Этот файл (основная документация)
+├── README-2.md                 # Документация для Части 2
+├── genai-readme-2.md           # Спецификация для Cursor Agent (Часть 2)
+├── human-readme-2.md           # Руководство для человека (Часть 2)
 ├── nginx/
 │   ├── nginx.conf              # Основной конфиг Nginx
 │   ├── conf.d/
-│   │   └── default.conf        # Конфигурация блоков серверов
-│   ├── html/
-│   │   └── index.html          # Статическая главная страница
+│   │   └── default.conf        # Конфигурация блоков (API proxy + статика)
 │   └── ssl/                    # SSL сертификаты (не в git)
+├── backend/                    # FastAPI backend приложение
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   ├── main.py                 # Точка входа FastAPI приложения
+│   ├── core/
+│   │   └── database.py         # Подключение к БД
+│   ├── models/                 # SQLAlchemy модели
+│   │   ├── admin_settings.py
+│   │   ├── applications.py
+│   │   └── behavior_metrics.py
+│   └── routes/                 # API маршруты
+│       ├── admin_settings.py
+│       └── applications.py
+├── frontend/                   # Webpack frontend приложение
+│   ├── package.json
+│   ├── webpack.config.js
+│   ├── src/
+│   │   ├── index.html          # HTML шаблон
+│   │   ├── index.js            # Логика приложения
+│   │   └── styles.css          # "Элитный" стиль CSS
+│   └── dist/                   # Результат сборки (генерируется, не в git)
+│       ├── index.html
+│       ├── main.*.css          # Извлеченный CSS
+│       └── main.*.js           # Собранный JavaScript
 └── registry/
     ├── create-user.sh          # Скрипт создания пользователя Registry
     └── auth/
@@ -822,8 +952,12 @@ order-processing-vps-infra/
 ### 📊 Статус проекта
 
 ✅ **Этап 1**: Настройка инфраструктуры (nginx, postgres, pgadmin, registry, watchtower)  
-🔜 **Этап 2**: Развертывание backend приложения (скоро)  
-🔜 **Этап 3**: Интеграция frontend и админ-панель
+✅ **Этап 2**: Развертывание backend приложения (FastAPI + PostgreSQL + SQLAlchemy)  
+✅ **Этап 3**: Интеграция frontend (Webpack + Vanilla JS, "элитный" дизайн)
+
+**Текущая версия**: Часть 2 - Full-stack приложение с backend и frontend
+
+**Статус**: ✅ **Готово к продакшену** - Все компоненты функциональны, протестированы и развернуты
 
 ---
 

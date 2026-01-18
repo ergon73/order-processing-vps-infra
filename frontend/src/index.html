@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autéllo - Оставить заявку</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="floating-bg"></div>
+    <div class="container">
+        <h1>Оставьте заявку</h1>
+        <form id="application-form">
+            <label>
+                Выберите услугу:
+                <select id="service-select" required>
+                    <option value="">Загрузка услуг...</option>
+                </select>
+            </label>
+            
+            <label>
+                Имя:
+                <input type="text" name="first_name" required>
+            </label>
+            
+            <label>
+                Фамилия:
+                <input type="text" name="last_name" required>
+            </label>
+            
+            <label>
+                Отчество:
+                <input type="text" name="middle_name">
+            </label>
+            
+            <label>
+                Информация о бизнесе:
+                <textarea name="business_info"></textarea>
+            </label>
+            
+            <label>
+                Бюджет:
+                <input type="text" name="budget">
+            </label>
+            
+            <label>
+                Предпочтительный способ связи:
+                <input type="text" name="preferred_contact_method">
+            </label>
+            
+            <label>
+                Комментарии:
+                <textarea name="comments"></textarea>
+            </label>
+            
+            <button type="submit">Отправить заявку</button>
+        </form>
+        
+        <div id="message" class="message"></div>
+    </div>
+</body>
+</html>
