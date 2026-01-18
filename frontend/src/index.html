@@ -40,7 +40,31 @@
             
             <label>
                 Бюджет:
-                <input type="text" name="budget">
+                <input type="text" name="budget" placeholder="например: 5000000-10000000">
+            </label>
+            
+            <label>
+                Размер компании:
+                <select name="company_size">
+                    <option value="">Выберите размер</option>
+                    <option value="1-10">1-10 сотрудников</option>
+                    <option value="10-50">10-50 сотрудников</option>
+                    <option value="50-100">50-100 сотрудников</option>
+                    <option value="100-500">100-500 сотрудников</option>
+                    <option value="500+">500+ сотрудников</option>
+                </select>
+            </label>
+            
+            <label>
+                Срок выполнения:
+                <select name="deadline">
+                    <option value="">Выберите срок</option>
+                    <option value="1 неделя">1 неделя (срочно)</option>
+                    <option value="2 недели">2 недели</option>
+                    <option value="1 месяц">1 месяц</option>
+                    <option value="2-3 месяца">2-3 месяца</option>
+                    <option value="3+ месяца">3+ месяца</option>
+                </select>
             </label>
             
             <label>
@@ -50,7 +74,7 @@
             
             <label>
                 Комментарии:
-                <textarea name="comments"></textarea>
+                <textarea name="comments" placeholder="Дополнительная информация, срочность и т.д."></textarea>
             </label>
             
             <button type="submit">Отправить заявку</button>
@@ -58,5 +82,8 @@
         
         <div id="message" class="message"></div>
     </div>
+    
+    <script type="module" src="./behavior-metrics.js"></script>
+    <script type="module" src="./index.js"></script>
 </body>
 </html>

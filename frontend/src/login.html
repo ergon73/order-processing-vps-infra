@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация - Autéllo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <div class="floating-bg"></div>
+    <div class="container">
+        <h1>Авторизация</h1>
+        
+        <!-- Форма регистрации (скрывается если админы есть) -->
+        <div id="register-section" style="display: none;">
+            <h2>Регистрация первого админа</h2>
+            <form id="register-form">
+                <label>
+                    Email:
+                    <input type="email" id="register-email" required>
+                </label>
+                <label>
+                    Пароль:
+                    <input type="password" id="register-password" required minlength="8">
+                </label>
+                <label>
+                    Подтвердите пароль:
+                    <input type="password" id="register-password-confirm" required minlength="8">
+                </label>
+                <button type="submit">Зарегистрироваться</button>
+            </form>
+            <div id="register-message"></div>
+        </div>
+        
+        <!-- Форма входа -->
+        <div id="login-section">
+            <h2>Вход в систему</h2>
+            <form id="login-form">
+                <label>
+                    Email:
+                    <input type="email" id="login-email" required>
+                </label>
+                <label>
+                    Пароль:
+                    <input type="password" id="login-password" required>
+                </label>
+                <button type="submit">Войти</button>
+            </form>
+            <div id="login-message"></div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <a href="/" style="color: #667eea;">← Вернуться на главную</a>
+        </div>
+    </div>
+    
+    <script type="module" src="./auth.js"></script>
+</body>
+</html>

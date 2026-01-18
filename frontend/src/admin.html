@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Autéllo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            font-family: 'Playfair Display', serif;
+        }
+        .tab.active {
+            background: #667eea;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #667eea;
+            color: white;
+        }
+        .priority-high { background: #ffe6e6; }
+        .priority-medium { background: #fff4e6; }
+        .priority-low { background: #e6ffe6; }
+        .btn {
+            padding: 8px 16px;
+            margin: 4px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Playfair Display', serif;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-danger { background: #e74c3c; color: white; }
+        .btn-success { background: #27ae60; color: white; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            position: relative;
+        }
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 10px;
+            font-size: 28px;
+            cursor: pointer;
+        }
+        .heatmap-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        canvas {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .stats-item {
+            padding: 15px;
+            margin: 10px 0;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-bg"></div>
+    <div class="admin-container">
+        <h1>Админ-панель Autéllo</h1>
+        
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="/" style="color: #667eea; margin-right: 20px;">Главная</a>
+            <button class="btn btn-danger" id="logout-btn">Выйти</button>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="services">Услуги</button>
+            <button class="tab" data-tab="applications">Заявки</button>
+            <button class="tab" data-tab="statistics">Статистика</button>
+        </div>
+        
+        <!-- Вкладка Услуги -->
+        <div id="services-tab" class="tab-content active">
+            <h2>Управление услугами</h2>
+            <button class="btn btn-primary" id="add-service-btn">Добавить услугу</button>
+            
+            <table id="services-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Бюджет</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="services-tbody">
+                    <!-- Загружается динамически -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Вкладка Заявки -->
+        <div id="applications-tab" class="tab-content">
+            <h2>Заявки (отсортированы по приоритету)</h2>
+            
+            <table id="applications-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Клиент</th>
+                        <th>Услуга</th>
+                        <th>Бюджет</th>
+                        <th>Приоритет</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="applications-tbody">
+                    <!-- Загружается динамически -->
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Вкладка Статистика -->
+        <div id="statistics-tab" class="tab-content">
+            <h2>Статистика пользователей</h2>
+            
+            <div id="stats-content">
+                <div class="stats-item">
+                    <h3>Среднее время на странице</h3>
+                    <p>День: <span id="avg-day">-</span> сек</p>
+                    <p>Неделя: <span id="avg-week">-</span> сек</p>
+                    <p>Месяц: <span id="avg-month">-</span> сек</p>
+                </div>
+                
+                <div class="heatmap-container">
+                    <h3>Heatmap координат курсора</h3>
+                    <canvas id="heatmap-canvas" width="800" height="600"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальное окно для редактирования услуги -->
+    <div id="service-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-modal">&times;</span>
+            <h2 id="modal-title">Добавить услугу</h2>
+            <form id="service-form">
+                <input type="hidden" id="service-id">
+                <label>
+                    Название услуги:
+                    <input type="text" id="service-name" required>
+                </label>
+                <label>
+                    Диапазон бюджета:
+                    <input type="text" id="service-budget" placeholder="20k-60k">
+                </label>
+                <button type="submit" class="btn btn-success">Сохранить</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Модальное окно для просмотра заявки -->
+    <div id="application-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-app-modal">&times;</span>
+            <h2>Детали заявки</h2>
+            <div id="application-details"></div>
+        </div>
+    </div>
+    
+    <script type="module" src="./admin.js"></script>
+</body>
+</html>

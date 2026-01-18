@@ -50,6 +50,7 @@ class Application(Base):
     interested_product = Column(String)
     preferred_contact = Column(String)
     convenient_time = Column(String)
+    priority_score = Column(Integer, default=0)  # Score приоритизации (0-100)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

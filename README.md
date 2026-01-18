@@ -11,10 +11,10 @@
 
 ## 🇬🇧 English
 
-Production-ready VPS infrastructure and web application for order processing. Full-stack solution with FastAPI backend, modern frontend, and PostgreSQL database. Deployed via Docker Compose on Ubuntu 22.04 VPS with Nginx, PostgreSQL, pgAdmin, private Docker Registry, and automated updates.
+Production-ready VPS infrastructure and web application for order processing. Full-stack solution with FastAPI backend, modern frontend, PostgreSQL database, JWT authentication, behavioral metrics collection, and intelligent lead prioritization. Deployed via Docker Compose on Ubuntu 22.04 VPS with Nginx, PostgreSQL, pgAdmin, private Docker Registry, and automated updates.
 
-> 🎓 **Educational Project**: Part of "Vibe-Coding" course - Module 8, Case 3 (Part 2)  
-> Demonstrates modern DevOps practices: Docker containerization, secure SSH access, infrastructure as code, RESTful API, and frontend build pipelines.
+> 🎓 **Educational Project**: Part of "Vibe-Coding" course - Module 8, Case 3 (Part 3)  
+> Demonstrates modern DevOps practices: Docker containerization, secure SSH access, infrastructure as code, RESTful API, JWT authentication, behavioral analytics, and frontend build pipelines.
 
 ---
 
@@ -26,6 +26,10 @@ Production-ready VPS infrastructure and web application for order processing. Fu
 - [Prerequisites](#-prerequisites)
 - [Quick Start](#-quick-start)
 - [Services & Ports](#-services--ports)
+- [API Endpoints](#-api-endpoints)
+- [Database Schema](#-database-schema)
+- [Priority System](#-priority-system)
+- [Behavioral Metrics](#-behavioral-metrics)
 - [Configuration](#-configuration)
 - [Deployment](#-deployment)
 - [Security](#-security)
@@ -41,14 +45,17 @@ Production-ready VPS infrastructure and web application for order processing. Fu
 - **🐳 Fully Dockerized**: All services run in Docker containers
 - **🚀 Full-Stack Application**: FastAPI backend + Webpack frontend
 - **🎨 Modern UI**: "Elite style" frontend with smooth animations and elegant design
+- **🔐 JWT Authentication**: Secure admin panel access with token-based authorization
+- **📊 Behavioral Metrics**: Real-time collection of user interactions (time on page, clicks, cursor heatmap)
+- **🎯 Intelligent Prioritization**: Automatic lead scoring based on budget, company size, and urgency
 - **📡 RESTful API**: FastAPI with automatic OpenAPI/Swagger documentation
 - **🗄️ Database**: PostgreSQL with SQLAlchemy ORM
-- **🔐 Secure by Default**: PostgreSQL isolated in internal network, SSH key-only access
+- **🔒 Production Security**: HTTPS-only access, backend and database isolated in internal network
 - **📦 Private Registry**: Self-hosted Docker registry with htpasswd authentication
 - **🔄 Auto-Updates**: Watchtower automatically updates containers
 - **⚡ Nginx Reverse Proxy**: High-performance web server, API proxy, and static file serving
-- **🎛️ Database Management**: Web-based pgAdmin interface
-- **📊 Production-Ready**: Healthchecks, restart policies, volume persistence
+- **🎛️ Database Management**: Web-based pgAdmin interface (dev mode)
+- **📈 Admin Dashboard**: CRUD operations for services, application management, user analytics
 
 ---
 
@@ -136,7 +143,8 @@ Production-ready VPS infrastructure and web application for order processing. Fu
 - **Ubuntu 22.04 LTS** (recommended 2 CPU, 2 GB RAM, 10 GB SSD)
 - **Public IPv4 address**
 - **Root access** (or sudo user)
-- **Open ports**: 22 (SSH), 80 (HTTP), 5000 (Registry), 5050 (pgAdmin)
+- **Open ports**: 22 (SSH), 80 (HTTP), 443 (HTTPS)
+- **Note**: pgAdmin (5050) and Registry (5000) are in dev profile only
 - **Node.js 20+** and **npm** (for frontend build)
 
 ---
@@ -157,13 +165,28 @@ cp .env.example .env
 nano .env
 ```
 
-Set strong passwords (12+ characters):
+Set strong passwords and generate SECRET_KEY for JWT:
 ```env
+# PostgreSQL Configuration
+POSTGRES_DB=app_db
+POSTGRES_USER=app_user
 POSTGRES_PASSWORD=your_strong_password_here
+
+# FastAPI JWT
+SECRET_KEY=<generate_with_openssl_rand_hex_32>
+
+# pgAdmin Configuration
+PGADMIN_EMAIL=admin@example.com
 PGADMIN_PASSWORD=another_strong_password
 ```
 
-#### 3. Create Registry User
+**Generate SECRET_KEY:**
+```bash
+openssl rand -hex 32
+# Copy the output and paste it into .env as SECRET_KEY value
+```
+
+#### 3. Create Registry User (optional, only if using dev profile)
 
 ```bash
 cd registry
@@ -171,6 +194,8 @@ chmod +x create-user.sh
 ./create-user.sh admin "YourRegistryPassword"
 cd ..
 ```
+
+**Note**: Registry is disabled by default in production. See [DEV_ACCESS.md](DEV_ACCESS.md) for details.
 
 #### 4. Build Frontend
 
@@ -194,11 +219,13 @@ docker compose ps  # All containers should be "Up"
 ```
 
 **Access Services**:
-- **Frontend**: `http://<VPS_IP>/`
-- **Swagger UI**: `http://<VPS_IP>/api/docs`
-- **API**: `http://<VPS_IP>/api/`
-- **pgAdmin**: `http://<VPS_IP>:5050`
-- **Registry**: `http://<VPS_IP>:5000/v2/`
+- **Frontend**: `https://service.prompt-engineer.su/` (or `http://<VPS_IP>/` redirects to HTTPS)
+- **Swagger UI**: `https://service.prompt-engineer.su/api/docs`
+- **API**: `https://service.prompt-engineer.su/api/`
+- **pgAdmin**: `http://<VPS_IP>:5050` (requires dev profile: `docker compose --profile dev up -d pgadmin`)
+- **Registry**: `http://<VPS_IP>:5000/v2/` (requires dev profile: `docker compose --profile dev up -d registry`)
+
+See [DEV_ACCESS.md](DEV_ACCESS.md) for accessing dev services.
 
 ---
 
@@ -208,11 +235,171 @@ docker compose ps  # All containers should be "Up"
 |---------|---------------|---------------|---------------|--------|
 | **Nginx** | `nginx` | 80 | 80 | Public |
 | **PostgreSQL** | `postgres` | 5432 | ❌ Not exposed | Internal only |
-| **pgAdmin** | `pgadmin` | 80 | 5050 | Public (dev) |
-| **Registry** | `registry` | 5000 | 5000 | Public (auth) |
+| **pgAdmin** | `pgadmin` | 80 | 5050 | Dev profile only |
+| **Registry** | `registry` | 5000 | 5000 | Dev profile only |
 | **Watchtower** | `watchtower` | - | - | Background |
 
-⚠️ **Production Security**: In production environments, restrict `5050` and `5000` to VPN/trusted IPs only.
+⚠️ **Production Security**: 
+- `pgAdmin` and `Registry` are **disabled by default** in production (dev profile)
+- To enable for administration: `docker compose --profile dev up -d pgadmin registry`
+- See [DEV_ACCESS.md](DEV_ACCESS.md) for details
+
+---
+
+### 🔌 API Endpoints
+
+#### Authentication (`/api/auth/`)
+- `GET /check` — Check if admins exist in the system
+- `POST /register` — Register the first admin (allowed only if no admins exist)
+- `POST /login` — Login and receive JWT token
+- `GET /me` — Get current admin profile (requires JWT)
+
+#### Services (`/api/admin-settings/`)
+- `GET /` — List all services
+- `POST /` — Create new service (requires JWT)
+- `PUT /{id}` — Update service (requires JWT)
+- `DELETE /{id}` — Delete service (requires JWT)
+
+#### Applications (`/api/applications/`)
+- `GET /` — List applications with priority ranking (requires JWT)
+- `POST /` — Create new application (public)
+- `GET /{id}` — Get application details (requires JWT)
+
+#### Behavioral Metrics (`/api/behavior-metrics/`)
+- `POST /` — Submit behavioral metrics (public, sent every second)
+- `GET /stats` — Get aggregated statistics (requires JWT)
+
+**API Documentation**: Available at `/api/docs` (Swagger UI)
+
+---
+
+### 🗄️ Database Schema
+
+#### `admins`
+Stores administrator accounts.
+
+```sql
+CREATE TABLE admins (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    hashed_password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+#### `admin_settings` (services)
+List of available services.
+
+```sql
+CREATE TABLE admin_settings (
+    id SERIAL PRIMARY KEY,
+    services VARCHAR(255) NOT NULL,
+    budget_range VARCHAR(100),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+#### `applications`
+Customer applications.
+
+```sql
+CREATE TABLE applications (
+    id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    middle_name VARCHAR(100),
+    email VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    interested_product VARCHAR(255),
+    business_info TEXT,
+    budget VARCHAR(100),
+    priority_score INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+#### `behavior_metrics`
+User behavioral metrics.
+
+```sql
+CREATE TABLE behavior_metrics (
+    id SERIAL PRIMARY KEY,
+    application_id INTEGER,  -- NULL for anonymous metrics
+    time_on_page INTEGER,
+    buttons_clicked TEXT,  -- JSON string
+    cursor_positions TEXT,  -- JSON string
+    return_frequency INTEGER,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+```
+
+---
+
+### 🎯 Priority System
+
+The application automatically ranks leads based on a scoring algorithm.
+
+#### Scoring Algorithm
+
+Each application receives a **priority score** based on three weighted criteria:
+
+1. **Budget (40% weight)**
+   - 5M+ rubles → 40 points
+   - 1-5M → 30 points
+   - 500k-1M → 20 points
+   - <500k → 10 points
+
+2. **Company Size (30% weight)**
+   - 500+ employees → 30 points
+   - 100-500 → 20 points
+   - 50-100 → 15 points
+   - <50 → 5 points
+
+3. **Urgency (30% weight)**
+   - Deadline "1 week" or "urgent" in comments → 30 points
+   - Deadline "1 month" → 15 points
+   - Deadline "3+ months" → 5 points
+
+#### Priority Visualization
+
+In the admin panel, applications are displayed with color indicators:
+
+- 🔥 **Red** (score > 80) — High priority (Urgent)
+- ⚠️ **Yellow** (score 50-80) — Medium priority
+- ✅ **Green** (score < 50) — Low priority
+
+The list is automatically sorted by descending score.
+
+---
+
+### 📊 Behavioral Metrics
+
+#### Data Collection
+
+The main page collects real-time behavioral data:
+
+- **Time on page** — Counter in seconds
+- **Element clicks** — Object `{element_id: count}`
+- **Cursor positions** — Array of points `[{x, y}, ...]`
+
+Data is sent to the server every second via `POST /api/behavior-metrics/`.
+
+#### Analytics in Admin Panel
+
+The "User Statistics" section shows:
+
+1. **Average time on page:**
+   - Last 24 hours
+   - Last week
+   - Last month
+
+2. **Heatmap (heat map):**
+   - Visualization of popular page zones
+   - Displayed via Canvas API or Chart.js
+   - Gradient from blue (cold) to red (hot)
+
+**Use case**: UX optimization based on real user behavior.
 
 ---
 
@@ -473,20 +660,41 @@ Student @ Vibe-Coding Course
 
 ✅ **Stage 1**: Infrastructure setup (nginx, postgres, pgadmin, registry, watchtower)  
 ✅ **Stage 2**: Backend application deployment (FastAPI + PostgreSQL + SQLAlchemy)  
-✅ **Stage 3**: Frontend integration (Webpack + Vanilla JS, "elite style" design)
+✅ **Stage 3**: Frontend integration (Webpack + Vanilla JS, "elite style" design)  
+✅ **Stage 4**: JWT authentication, behavioral metrics, lead prioritization
 
-**Current Version**: Part 2 - Full-stack application with backend and frontend
+**Current Version**: Part 3 - Complete application with admin panel, analytics, and security
 
 **Status**: ✅ **Production Ready** - All components functional, tested, and deployed
+
+#### Version History
+
+**v1.0.0 (Part 3)**
+- ✅ JWT authentication for admin panel
+- ✅ CRUD operations for services via visual interface
+- ✅ Behavioral metrics collection (time, clicks, heatmap)
+- ✅ Intelligent lead prioritization by "temperature"
+- ✅ Security: closed ports for backend and PostgreSQL
+- ✅ Production-ready configuration with HTTPS
+
+**v0.2.0 (Part 2)**
+- ✅ Backend API (FastAPI)
+- ✅ Database (PostgreSQL)
+- ✅ Application form on main page
+- ✅ Basic admin panel
+
+**v0.1.0 (Part 1)**
+- ✅ Architecture design
+- ✅ Docker Compose setup
 
 ---
 
 ## 🇷🇺 Русский
 
-Готовая к продакшену VPS инфраструктура и веб-приложение для обработки заказов. Полноценное full-stack решение с FastAPI backend, современным frontend и PostgreSQL базой данных. Развертывается через Docker Compose на Ubuntu 22.04 VPS с Nginx, PostgreSQL, pgAdmin, приватным Docker Registry и автоматическими обновлениями.
+Готовая к продакшену VPS инфраструктура и веб-приложение для обработки заказов. Полноценное full-stack решение с FastAPI backend, современным frontend, PostgreSQL базой данных, JWT-авторизацией, системой сбора поведенческих метрик и интеллектуальной приоритизацией заявок. Развертывается через Docker Compose на Ubuntu 22.04 VPS с Nginx, PostgreSQL, pgAdmin, приватным Docker Registry и автоматическими обновлениями.
 
-> 🎓 **Учебный проект**: Часть курса "Vibe-Coding" - Модуль 8, Кейс 3 (Часть 2)  
-> Демонстрирует современные DevOps практики: контейнеризация Docker, безопасный SSH доступ, инфраструктура как код, RESTful API и frontend build pipelines.
+> 🎓 **Учебный проект**: Часть курса "Vibe-Coding" - Модуль 8, Кейс 3 (Часть 3)  
+> Демонстрирует современные DevOps практики: контейнеризация Docker, безопасный SSH доступ, инфраструктура как код, RESTful API, JWT-авторизация, поведенческая аналитика и frontend build pipelines.
 
 ---
 
@@ -609,7 +817,8 @@ Student @ Vibe-Coding Course
 - **Ubuntu 22.04 LTS** (рекомендуется 2 CPU, 2 GB RAM, 10 GB SSD)
 - **Публичный IPv4 адрес**
 - **Доступ root** (или пользователь с sudo)
-- **Открытые порты**: 22 (SSH), 80 (HTTP), 5000 (Registry), 5050 (pgAdmin)
+- **Открытые порты**: 22 (SSH), 80 (HTTP), 443 (HTTPS)
+- **Примечание**: pgAdmin (5050) и Registry (5000) доступны только в dev профиле
 - **Node.js 20+** и **npm** (для сборки frontend)
 
 ---
@@ -636,7 +845,7 @@ POSTGRES_PASSWORD=ваш_сильный_пароль
 PGADMIN_PASSWORD=другой_сильный_пароль
 ```
 
-#### 3. Создание пользователя Registry
+#### 3. Создание пользователя Registry (опционально, только если используете dev профиль)
 
 ```bash
 cd registry
@@ -644,6 +853,8 @@ chmod +x create-user.sh
 ./create-user.sh admin "ВашПарольДляRegistry"
 cd ..
 ```
+
+**Примечание**: Registry отключен по умолчанию в продакшене. Подробности см. [DEV_ACCESS.md](DEV_ACCESS.md).
 
 #### 4. Сборка frontend
 
@@ -667,11 +878,13 @@ docker compose ps  # Все контейнеры должны быть в ста
 ```
 
 **Доступ к сервисам**:
-- **Frontend**: `http://<VPS_IP>/`
-- **Swagger UI**: `http://<VPS_IP>/api/docs`
-- **API**: `http://<VPS_IP>/api/`
-- **pgAdmin**: `http://<VPS_IP>:5050`
-- **Registry**: `http://<VPS_IP>:5000/v2/`
+- **Frontend**: `https://service.prompt-engineer.su/` (или `http://<VPS_IP>/` редиректит на HTTPS)
+- **Swagger UI**: `https://service.prompt-engineer.su/api/docs`
+- **API**: `https://service.prompt-engineer.su/api/`
+- **pgAdmin**: `http://<VPS_IP>:5050` (требует dev профиль: `docker compose --profile dev up -d pgadmin`)
+- **Registry**: `http://<VPS_IP>:5000/v2/` (требует dev профиль: `docker compose --profile dev up -d registry`)
+
+См. [DEV_ACCESS.md](DEV_ACCESS.md) для доступа к dev-сервисам.
 
 ---
 
@@ -682,11 +895,14 @@ docker compose ps  # Все контейнеры должны быть в ста
 | **Nginx** | `nginx` | 80 | 80 | Публичный |
 | **FastAPI Backend** | `backend` | 8000 | ❌ Не открыт | Только внутренний (через Nginx /api/) |
 | **PostgreSQL** | `postgres` | 5432 | ❌ Не открыт | Только внутренний |
-| **pgAdmin** | `pgadmin` | 80 | 5050 | Публичный (dev) |
-| **Registry** | `registry` | 5000 | 5000 | Публичный (с аутентификацией) |
+| **pgAdmin** | `pgadmin` | 80 | 5050 | Только dev профиль |
+| **Registry** | `registry` | 5000 | 5000 | Только dev профиль |
 | **Watchtower** | `watchtower` | - | - | Фоновый |
 
-⚠️ **Безопасность в продакшене**: В продакшен окружениях ограничьте доступ к портам `5050` и `5000` только через VPN/доверенные IP.
+⚠️ **Безопасность в продакшене**: 
+- `pgAdmin` и `Registry` **отключены по умолчанию** в продакшене (dev профиль)
+- Для включения: `docker compose --profile dev up -d pgadmin registry`
+- Подробности см. [DEV_ACCESS.md](DEV_ACCESS.md)
 
 ---
 
@@ -947,11 +1163,33 @@ order-processing-vps-infra/
 
 ✅ **Этап 1**: Настройка инфраструктуры (nginx, postgres, pgadmin, registry, watchtower)  
 ✅ **Этап 2**: Развертывание backend приложения (FastAPI + PostgreSQL + SQLAlchemy)  
-✅ **Этап 3**: Интеграция frontend (Webpack + Vanilla JS, "элитный" дизайн)
+✅ **Этап 3**: Интеграция frontend (Webpack + Vanilla JS, "элитный" дизайн)  
+✅ **Этап 4**: JWT-авторизация, поведенческие метрики, приоритизация заявок
 
-**Текущая версия**: Часть 2 - Full-stack приложение с backend и frontend
+**Текущая версия**: Часть 3 - Полнофункциональное приложение с админ-панелью, аналитикой и безопасностью
 
 **Статус**: ✅ **Готово к продакшену** - Все компоненты функциональны, протестированы и развернуты
+
+#### История версий
+
+**v1.0.0 (Часть 3)**
+- ✅ JWT-авторизация админ-панели
+- ✅ CRUD операции для услуг через визуальный интерфейс
+- ✅ Сбор поведенческих метрик (время, клики, heatmap)
+- ✅ Интеллектуальная приоритизация заявок по "температуре"
+- ✅ Безопасность: закрытие портов backend и PostgreSQL (8000, 5432)
+- ✅ Production-ready конфигурация с HTTPS (Let's Encrypt)
+- ✅ pgAdmin и Registry перемещены в dev профиль (отключены в продакшене)
+
+**v0.2.0 (Часть 2)**
+- ✅ Backend API (FastAPI)
+- ✅ База данных (PostgreSQL)
+- ✅ Форма заявки на главной странице
+- ✅ Базовая админ-панель
+
+**v0.1.0 (Часть 1)**
+- ✅ Проектирование архитектуры
+- ✅ Настройка Docker Compose
 
 ---
 
